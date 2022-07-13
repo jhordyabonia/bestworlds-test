@@ -45,10 +45,14 @@
 			       <label>Signup Bonus</label>
 			       <validate>required-entry validate-number validate-zero-or-greater</validate>
 		       	</field>
-		       	<field id="referral_reward" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-			       <label>Referral Reward</label>
-			       <validate>required-entry validate-number validate-zero-or-greater</validate>
-		       	</field>
+				<field id="referral_reward" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Referral Reward</label>
+					<validate>required-entry validate-number validate-zero-or-greater</validate>
+				</field>
+				<field id="referral_order_minimum_amount" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Referral Order Minimum Amount</label>
+					<validate>required-entry validate-number validate-zero-or-greater</validate>
+				</field>
 		       	<field id="referral_reward_denomination_range" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
 			       <label>Denomination Range</label>
 			       <validate>required-entry validate-number validate-zero-or-greater</validate>

@@ -59,10 +59,13 @@ Class FirstOrder implements ObserverInterface
     {
         try{
             $order = $observer->getOrder()->getId();
+            $referralOrderMinimumAmount =   $this->_scopeConfig ->getValue('referral/system/referral_order_minimum_amount');
+            //$statusExp =   $this->_scopeConfig ->getValue('referral/system/referral_order_status');
             $customerId = $observer->getOrder()->getCustomerId();
             $customerOrders = $this->_objectManager->create('Magento\Sales\Model\Order')->getCollection()
                 ->addFieldToFilter('customer_id', $customerId)
-                ->addFieldToFilter('grand_total',['gteq'=>10])
+                //->addFieldToFilter(//'status',['in' => $statusExp])
+                ->addFieldToFilter('grand_total',['gteq'=>$referralOrderMinimumAmount])
                 ->count();
 
             if($customerOrders==1){
