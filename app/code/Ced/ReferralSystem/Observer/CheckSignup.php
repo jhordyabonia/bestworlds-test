@@ -104,10 +104,10 @@ Class CheckSignup implements ObserverInterface
                 $transaction->setData('transaction_type', self::TRANSACTION_TYPE_CREDIT);
                 $transaction->setData('creation_date', $this->_date->gmtDate());
                 $transaction->save();
-                //$signupBonusCreated = $this->createDiscountCoupon($customer);
-                //if($signupBonusCreated && is_array($signupBonusCreated)){
+                $signupBonusCreated = $this->createDiscountCoupon($customer);
+                if($signupBonusCreated && is_array($signupBonusCreated)){
                 $this->_messageManager->addSuccessMessage(__('Thank you for registering with %1. Congratulations! Here’s your Rs. %2 joining bonus on becoming our member.', $this->storeManager->getStore()->getFrontendName(), $signup_bonus));
-                //}
+                }
             }
 
             if($referral_id !=''){
