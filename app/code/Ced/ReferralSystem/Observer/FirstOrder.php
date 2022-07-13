@@ -67,13 +67,11 @@ Class FirstOrder implements ObserverInterface
                 //->addFieldToFilter(//'status',['in' => $statusExp])
                 ->addFieldToFilter('grand_total',['gteq'=>$referralOrderMinimumAmount])
                 ->count();
-
-            if($customerOrders==1){
+            if($order->getGrandTotal() >= $referralOrderMinimumAmount && $customerOrders==1){
                 $customer = $this->_customerSession->getCustomer();
                 $referral_code = $customer->getReferralCode();
                 $referral_id = $this->getCustomerIdByReferralCode($referral_code);
 
-                $transaction=$this->_objectManager->create('Ced\ReferralSystem\Model\Transaction');
                 $referral_reward=$this->_scopeConfig->getValue('referral/system/referral_reward');
 
                 if($referral_id!=''){
