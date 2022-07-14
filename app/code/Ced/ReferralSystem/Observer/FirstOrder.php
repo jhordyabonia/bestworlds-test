@@ -45,10 +45,12 @@ Class FirstOrder implements ObserverInterface
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         RequestInterface $request,
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
-        \Magento\Customer\Model\Session $session
+        \Magento\Customer\Model\Session $session,
+        \Ced\ReferralSystem\Helper\Data $data
     )
     {
         $this->request = $request;
+        $this->_data = $data;
         $this->_date = $date;
         $this->_scopeConfig = $scopeConfig;
         $this->_customerSession = $session;
@@ -67,7 +69,8 @@ Class FirstOrder implements ObserverInterface
                 //->addFieldToFilter(//'status',['in' => $statusExp])
                 ->addFieldToFilter('grand_total',['gteq'=>$referralOrderMinimumAmount])
                 ->count();
-            if($order->getGrandTotal() >= $referralOrderMinimumAmount && $customerOrders==1){
+
+            if($customerOrders==1){
                 $customer = $this->_customerSession->getCustomer();
                 $referral_code = $customer->getReferralCode();
                 $referral_id = $this->getCustomerIdByReferralCode($referral_code);
@@ -75,7 +78,8 @@ Class FirstOrder implements ObserverInterface
                 $referral_reward=$this->_scopeConfig->getValue('referral/system/referral_reward');
 
                 if($referral_id!=''){
-                    $this->createDiscountCoupon($referral_id);
+                    $coupon = $this->createDiscountCoupon($referral_id);
+                    $this->sendCoupon($referral_id,$customer->getEmail(),$coupon);
                     $transaction = $this->_objectManager->create('Ced\ReferralSystem\Model\Transaction');
                     $transaction->setData('customer_id', $referral_id);
                     $transaction->setData('description', "Referral Reward For-".$customer->getEmail());
@@ -101,6 +105,10 @@ Class FirstOrder implements ObserverInterface
         }
     }
 
+    public function sendCoupon($customerId,$emailBuyer,$coupon){
+        $message =__('Discount coupon code (%1) by $%2, Received for referring, %3',$coupon['coupon_code'],$coupon['coupon_amount'],$emailBuyer);
+        $this->_data->sendCoupon($customerId,$message,__('Discount coupon code Received for referring,'),$coupon['coupon_code']);
+    }
 
     public function createDiscountCoupon($referral_id) {
 
@@ -195,8 +203,10 @@ Class FirstOrder implements ObserverInterface
         }catch(\Exception $e){
             return false;
         }
+
         return ['success'=>true, 'coupon_code'=>$uniqueId, 'coupon_amount'=>$discountAmount];
     }
+
 
     private function generatePromoCode($length = null)
     {

@@ -91,6 +91,56 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $sent;
     }
 
+
+    public function sendCoupon($customerId, $message, $subject, $cupon)
+    {
+        $support = $this->scopeConfig->getValue('referral/system/support_email');
+
+        $modeldata = $this->customerModel->load($customerId);
+        $emails = [$modeldata->getEmail()];
+
+        $emailvariables['name'] = $modeldata->getFirstname();
+
+        $emailvariables['storename'] = $this->scopeConfig->getValue('general/store_information/name',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+        $emailvariables['subject'] = $subject;
+        $emailvariables['message'] = $message;
+        $emailvariables['cupon'] = $cupon;
+
+        $this->_template = 'cupon_email';
+        $this->_inlineTranslation->suspend();
+        $senderInfo = [
+            'name' => 'SUPPORT',
+            'email' => $support,
+        ];
+
+        $sent = 0;
+        try {
+            foreach ($emails as $email) {
+
+                $this->_transportBuilder->setTemplateIdentifier($this->_template)
+                    ->setTemplateOptions(
+                        [
+                            'area' => \Magento\Framework\App\Area::AREA_FRONTEND,
+                            'store' => $this->_storeManager->getStore()->getId(),
+                        ]
+                    )
+                    ->setTemplateVars($emailvariables)
+                    ->setFrom($senderInfo)
+                    ->addTo($email, 'Referral');
+                $transport = $this->_transportBuilder->getTransport();
+                $transport->sendMessage();
+                $sent++;
+            }
+        }catch (\Exception $e) {
+            return false;
+        }
+        $this->_inlineTranslation->resume();
+        return $sent;
+    }
+
+
     public function generatePromoCode() 
     {
         $length = 6;
