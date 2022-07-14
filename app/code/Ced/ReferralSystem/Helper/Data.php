@@ -108,7 +108,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $emailvariables['message'] = $message;
         $emailvariables['cupon'] = $cupon;
 
-        $this->_template = 'cupon_email';
+        $this->_template = 'coupon_referal_email';
         $this->_inlineTranslation->suspend();
         $senderInfo = [
             'name' => 'SUPPORT',

@@ -21,6 +21,6 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
     <template id="invitation_referal_email" label="Invitation Link"
               file="invitation_email.html" type="html" module="Ced_ReferralSystem" area="frontend"/>
-    <template id="cupon_referal_email" label="Cupon Referral"
-              file="cupon_email.html" type="html" module="Ced_ReferralSystem" area="frontend"/>
+    <template id="coupon_referal_email" label="Cupon Referral"
+              file="coupon_email.html" type="html" module="Ced_ReferralSystem" area="frontend"/>
 </config>
