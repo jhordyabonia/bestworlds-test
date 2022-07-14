@@ -51,7 +51,8 @@ Class CheckSignup implements ObserverInterface
                                 DataObjectHelper $dataObjectHelper,
                                 \Magento\Framework\Message\ManagerInterface $messageManager,
                                 StoreManagerInterface $storeManager,
-                                \Magento\Customer\Model\Customer\Mapper $customerMapper)
+                                \Magento\Customer\Model\Customer\Mapper $customerMapper,
+                                \Ced\ReferralSystem\Helper\Data $data)
     {
         $this->request = $request;
         $this->_scopeConfig = $scopeConfig;
@@ -64,6 +65,8 @@ Class CheckSignup implements ObserverInterface
         $this->_dataObjectHelper = $dataObjectHelper;
         $this->_messageManager = $messageManager;
         $this->storeManager = $storeManager;
+
+        $this->_data = $data;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -105,8 +108,13 @@ Class CheckSignup implements ObserverInterface
                 $transaction->setData('creation_date', $this->_date->gmtDate());
                 $transaction->save();
                 $signupBonusCreated = $this->createDiscountCoupon($customer);
+
+                $message =__('Discount coupon code (%1) by $%2, Received for joining bonus on becoming our member.',$signupBonusCreated['coupon_code'],$signupBonusCreated['coupon_amount']);
+                $message1 = __('Thank you for registering with %1. Congratulations! Here’s your. %2 joining bonus on becoming our member.', $this->storeManager->getStore()->getFrontendName(), $signup_bonus);
+                $this->_data->sendCoupon($customer_id,$message1."<br/>".$message,__('Discount coupon code Received for referring,'),$signupBonusCreated['coupon_code']);
+
                 if($signupBonusCreated && is_array($signupBonusCreated)){
-                $this->_messageManager->addSuccessMessage(__('Thank you for registering with %1. Congratulations! Here’s your Rs. %2 joining bonus on becoming our member.', $this->storeManager->getStore()->getFrontendName(), $signup_bonus));
+                $this->_messageManager->addSuccessMessage($message1);
                 }
             }
 
