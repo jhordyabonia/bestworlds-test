@@ -75,6 +75,7 @@ Class FirstOrder implements ObserverInterface
                 $referral_reward=$this->_scopeConfig->getValue('referral/system/referral_reward');
 
                 if($referral_id!=''){
+                    $this->createDiscountCoupon($referral_id);
                     $transaction = $this->_objectManager->create('Ced\ReferralSystem\Model\Transaction');
                     $transaction->setData('customer_id', $referral_id);
                     $transaction->setData('description', "Referral Reward For-".$customer->getEmail());
